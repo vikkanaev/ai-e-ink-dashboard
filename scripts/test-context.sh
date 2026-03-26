@@ -30,11 +30,11 @@ section() {
 }
 
 ok() {
-	printf '[OK]   %s\n' "$1"
+	printf '\033[32m[OK]\033[0m   %s\n' "$1"
 }
 
 fail() {
-	printf '[FAIL] %s\n' "$1"
+	printf '\033[31m[FAIL]\033[0m %s\n' "$1"
 	failures=$((failures + 1))
 }
 
@@ -182,7 +182,7 @@ fi
 codex_agents_md="${HOME}/.codex/AGENTS.md"
 if [ -f "$codex_agents_md" ]; then
 	b=$(wc -c <"$codex_agents_md" | tr -d ' ')
-	printf '[INFO] Codex AGENTS.md exists (%s bytes)\n' "$b"
+	printf '\033[34m[INFO]\033[0m Codex AGENTS.md exists (%s bytes)\n' "$b"
 else
 	ok "Codex AGENTS.md does not exist"
 fi
@@ -293,7 +293,7 @@ check_threshold() {
 	if [ "$tokens" -ge "$CONTEXT_FAIL_TOKENS" ]; then
 		fail "$label baseline ~${tokens} tokens (threshold: ${CONTEXT_FAIL_TOKENS})"
 	elif [ "$tokens" -ge "$CONTEXT_WARN_TOKENS" ]; then
-		printf '[WARN] %s baseline ~%s tokens (threshold: %s)\n' "$label" "$tokens" "$CONTEXT_WARN_TOKENS"
+		printf '\033[33m[WARN]\033[0m %s baseline ~%s tokens (threshold: %s)\n' "$label" "$tokens" "$CONTEXT_WARN_TOKENS"
 		warnings=$((warnings + 1))
 	else
 		ok "$label baseline ~${tokens} tokens"

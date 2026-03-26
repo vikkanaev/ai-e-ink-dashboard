@@ -31,16 +31,16 @@ section() {
 }
 
 ok() {
-	printf '[OK] %s\n' "$1"
+	printf '\033[32m[OK]\033[0m %s\n' "$1"
 }
 
 fail() {
-	printf '[FAIL] %s\n' "$1"
+	printf '\033[31m[FAIL]\033[0m %s\n' "$1"
 	required_failures=$((required_failures + 1))
 }
 
 warn() {
-	printf '[WARN] %s\n' "$1"
+	printf '\033[33m[WARN]\033[0m %s\n' "$1"
 	warnings=$((warnings + 1))
 }
 
