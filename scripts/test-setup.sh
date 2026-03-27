@@ -10,7 +10,6 @@ export PATH
 required_failures=0
 warnings=0
 
-
 section() {
 	printf '\n== %s ==\n' "$1"
 }
