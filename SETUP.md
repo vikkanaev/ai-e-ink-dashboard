@@ -14,8 +14,8 @@ make
 
 По умолчанию `make` запускает target `ai`, который последовательно:
 
-1. ставит `mise`, если его еще нет;
-2. устанавливает инструменты из `mise.toml`;
+1. ставит `asdf`, если его еще нет;
+2. устанавливает инструменты из `.tool-versions`;
 3. ставит CLI-агенты;
 4. ставит CLI-утилиты для агентов;
 5. ставит curated skills для `codex` и `claude-code`.
@@ -56,9 +56,9 @@ make check
 
 ## Что устанавливается автоматически
 
-### Инструменты через `mise`
+### Инструменты через `asdf`
 
-Из `mise.toml` ставятся: `direnv`, `gh`, `gitleaks`, `jq`, `node`, `port-selector`, `ruby`
+Из `.tool-versions` ставятся: `direnv`, `gh`, `gitleaks`, `jq`, `node`, `ruby`; `port-selector` устанавливается отдельно через brew или curl.
 
 ### Кодинговые агенты
 

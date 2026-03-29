@@ -2,12 +2,12 @@
 
 BLUE := \033[0;34m
 NC := \033[0m
-PATH := $(HOME)/.local/bin:/usr/local/bin:/opt/homebrew/bin:$(PATH)
+PATH := $(HOME)/.asdf/shims:$(HOME)/.local/bin:/usr/local/bin:/opt/homebrew/bin:$(PATH)
 VERSION ?= 0.2.0
 
-NPM ?= mise exec -- npm
-CLAUDE ?= mise exec -- claude
-SKILLS_NPX ?= mise exec -- npx
+NPM ?= npm
+CLAUDE ?= claude
+SKILLS_NPX ?= npx
 SKILLS ?= $(SKILLS_NPX) skills
 AGENTS_TARGETS := codex claude-code
 AGENTS_SKILLS_AGENT_FLAGS := $(foreach agent,$(AGENTS_TARGETS),-a $(agent))
@@ -22,14 +22,14 @@ GOOGLE_WORKSPACE_SKILLS := \
 	gws-drive \
 	gws-sheets
 
-.PHONY: ai bootstrap mise-package mise-install version check extra extra-check check-context codex-context register
+.PHONY: ai bootstrap asdf-package asdf-install version check extra extra-check check-context codex-context register
 .PHONY: agents-install agents agents-cli agents-skills extra-skills
 .PHONY: agents-skills-install agents-skills-list agents-skills-check-npx
 
 ai: bootstrap
 	@$(MAKE) agents-install
 
-bootstrap: mise-package mise-install
+bootstrap: asdf-package asdf-install
 
 version:
 	@version="$(VERSION)"; \
@@ -54,35 +54,43 @@ check-context:
 codex-context:
 	@./scripts/codex-context.sh
 
-mise-package:
+asdf-package:
 	@set -e; \
-	if command -v mise > /dev/null 2>&1; then \
-		echo "Install mise - already exists"; \
+	if command -v asdf > /dev/null 2>&1; then \
+		echo "Install asdf - already exists"; \
 	elif command -v brew > /dev/null 2>&1; then \
-		brew install mise; \
-		echo "Install mise - installed via brew"; \
-	elif command -v curl > /dev/null 2>&1; then \
-		if [ -w /usr/local/bin ]; then \
-			MISE_INSTALL_PATH=/usr/local/bin/mise; \
-			SUDO=""; \
-		elif command -v sudo > /dev/null 2>&1; then \
-			MISE_INSTALL_PATH=/usr/local/bin/mise; \
-			SUDO="sudo"; \
-		else \
-			mkdir -p "$(HOME)/.local/bin"; \
-			MISE_INSTALL_PATH="$(HOME)/.local/bin/mise"; \
-			SUDO=""; \
-		fi; \
-		curl -fsSL https://mise.run | $$SUDO env MISE_INSTALL_PATH="$$MISE_INSTALL_PATH" sh; \
-		echo "Install mise - installed via mise.run to $$MISE_INSTALL_PATH"; \
+		brew install asdf; \
+		echo "Install asdf - installed via brew"; \
+	elif command -v git > /dev/null 2>&1; then \
+		git clone https://github.com/asdf-vm/asdf.git "$(HOME)/.asdf" --branch v0.16.7; \
+		echo "Install asdf - installed via git to $(HOME)/.asdf"; \
+		echo "⚠️  Add asdf to your shell: https://asdf-vm.com/guide/getting-started.html"; \
 	else \
-		echo "Install mise - failed: need either brew or curl to install mise"; \
+		echo "Install asdf - failed: need either brew or git to install asdf"; \
 		exit 1; \
 	fi
 
-mise-install: mise-package
-	@echo "Install mise tools"
-	@mise install --quiet
+asdf-install: asdf-package
+	@echo "Install asdf plugins and tools"
+	@asdf plugin add nodejs || true
+	@asdf plugin add ruby || true
+	@asdf plugin add direnv || true
+	@asdf plugin add github-cli || true
+	@asdf plugin add gitleaks || true
+	@asdf plugin add jq || true
+	@asdf install
+	@if ! command -v port-selector > /dev/null 2>&1; then \
+		if command -v brew > /dev/null 2>&1; then \
+			brew install dapi/tap/port-selector 2>/dev/null || \
+			(curl -fsSL https://github.com/dapi/port-selector/releases/latest/download/port-selector-$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m) -o "$(HOME)/.local/bin/port-selector" && chmod +x "$(HOME)/.local/bin/port-selector"); \
+		elif command -v curl > /dev/null 2>&1; then \
+			mkdir -p "$(HOME)/.local/bin"; \
+			curl -fsSL https://github.com/dapi/port-selector/releases/latest/download/port-selector-$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m) -o "$(HOME)/.local/bin/port-selector" && chmod +x "$(HOME)/.local/bin/port-selector"; \
+		fi; \
+		echo "Install port-selector - done"; \
+	else \
+		echo "Install port-selector - already exists"; \
+	fi
 
 agents-install: agents agents-cli agents-skills
 
@@ -113,7 +121,7 @@ agents-cli:
 agents-skills: agents-skills-install
 
 agents-skills-check-npx:
-	@$(SKILLS_NPX) --version >/dev/null 2>&1 || (echo "❌ npx not available via mise. Run 'make ai' after bootstrap installs Node.js." && exit 1)
+	@$(SKILLS_NPX) --version >/dev/null 2>&1 || (echo "❌ npx not available. Run 'make ai' after bootstrap installs Node.js." && exit 1)
 
 agents-skills-install: agents-skills-check-npx
 	@echo "$(BLUE)📦 Installing core skills...$(NC)"
@@ -145,7 +153,14 @@ extra: extra-skills
 
 extra-skills: agents-skills-check-npx
 	@echo "$(BLUE)📦 Installing extra CLIs, skills, and plugins...$(NC)"
-	@mise install "github:pimalaya/himalaya"
+	@if command -v brew > /dev/null 2>&1; then \
+		brew install pimalaya/pimalaya/himalaya 2>/dev/null || echo "⚠️  himalaya: install manually from https://github.com/pimalaya/himalaya/releases"; \
+	elif command -v curl > /dev/null 2>&1; then \
+		mkdir -p "$(HOME)/.local/bin"; \
+		curl -fsSL https://raw.githubusercontent.com/pimalaya/himalaya/master/install.sh | sh -s -- --dest "$(HOME)/.local/bin"; \
+	else \
+		echo "⚠️  himalaya: need brew or curl — install manually from https://github.com/pimalaya/himalaya/releases"; \
+	fi
 	@$(NPM) install -g @dapi/tgcli
 	@$(NPM) install -g @googleworkspace/cli
 	@echo "  📥 Installing tgcli from dapi/tgcli"

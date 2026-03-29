@@ -174,23 +174,23 @@ check_direnv_port() {
 
 
 section "Shell integration (required)"
-if command_in_path mise; then
-	ok "mise in PATH"
+if command_in_path asdf; then
+	ok "asdf in PATH"
 else
-	fail "mise in PATH"
-	note "mise is not in your shell PATH. Install via brew or add ~/.local/bin to PATH."
+	fail "asdf in PATH"
+	note "asdf is not in your shell PATH. Install via brew or see: https://asdf-vm.com/guide/getting-started.html"
 fi
-if path_contains "mise/shims\|mise/installs"; then
-	ok "mise activate (tool paths in PATH)"
+if path_contains "asdf/shims"; then
+	ok "asdf shims (tool paths in PATH)"
 else
-	fail "mise activate (tool paths in PATH)"
-	note "mise tool directories not in PATH. Add 'mise activate' to your shell rc — see: https://mise.jdx.dev/getting-started.html"
+	fail "asdf shims (tool paths in PATH)"
+	note "asdf shims not in PATH. Add asdf to your shell rc — see: https://asdf-vm.com/guide/getting-started.html"
 fi
 if command_in_path direnv; then
 	ok "direnv in PATH"
 else
 	fail "direnv in PATH"
-	note "direnv is not in your shell PATH. Ensure mise activate is configured so mise-installed tools are available."
+	note "direnv is not in your shell PATH. Ensure asdf shims are configured so asdf-installed tools are available."
 fi
 if [ -n "${DIRENV_DIR:-}" ]; then
 	ok "direnv hook active (DIRENV_DIR is set)"
@@ -200,7 +200,7 @@ else
 fi
 
 section "Core toolchain (required)"
-check_command required "mise installed" mise --version
+check_command required "asdf installed" asdf version
 check_command required "direnv installed" direnv version
 check_command required "gh installed" gh --version
 check_command required "jq installed" jq --version
