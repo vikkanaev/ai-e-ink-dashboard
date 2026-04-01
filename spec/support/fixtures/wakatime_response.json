@@ -1,0 +1,21 @@
+{
+  "data": [
+    {
+      "grand_total": {
+        "total_seconds": 15780,
+        "hours": 4,
+        "minutes": 23,
+        "text": "4 hrs 23 mins"
+      },
+      "languages": [
+        { "name": "Ruby",   "total_seconds": 7800 },
+        { "name": "JavaScript", "total_seconds": 3900 },
+        { "name": "Python", "total_seconds": 2700 },
+        { "name": "YAML",   "total_seconds": 1080 }
+      ],
+      "range": {
+        "date": "2026-04-01"
+      }
+    }
+  ]
+}

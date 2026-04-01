@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 6200000,
+      "output_tokens": 2000000
+    }
+  ],
+  "limit": {
+    "input_tokens": 10000000,
+    "output_tokens": 10000000
+  },
+  "reset_at": "2026-04-04T00:00:00Z"
+}

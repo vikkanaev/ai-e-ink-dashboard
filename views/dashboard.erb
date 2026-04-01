@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=800">
+  <title>Dashboard</title>
+  <style>
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --font: system-ui, -apple-system, sans-serif;
+      --col-calendar: 220px;
+      --col-wakatime: 360px;
+      --col-tokens: 220px;
+      --height-header: 48px;
+      --height-footer: 24px;
+      --padding-widget: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: none;
+      font-smoothing: none;
+    }
+
+    body {
+      width: 800px;
+      height: 480px;
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--font);
+      overflow: hidden;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 800px;
+      height: var(--height-header);
+      background: var(--black);
+      color: var(--white);
+      padding: 0 16px;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .header__date { font-size: 22px; font-weight: bold; }
+    .header__time { font-size: 22px; }
+
+    /* ── COLUMNS ─────────────────────────────────────── */
+    .columns {
+      display: flex;
+      width: 800px;
+      height: 408px;
+    }
+
+    .col {
+      padding: var(--padding-widget);
+      overflow: hidden;
+    }
+
+    .col--calendar { width: var(--col-calendar); border-right: 2px solid var(--black); }
+    .col--wakatime  { width: var(--col-wakatime); border-right: 2px solid var(--black); }
+    .col--tokens    { width: var(--col-tokens); }
+
+    /* ── WIDGET HEADER ───────────────────────────────── */
+    .widget-title {
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--black);
+      margin-bottom: 8px;
+    }
+
+    /* ── NO DATA ─────────────────────────────────────── */
+    .no-data {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: calc(100% - 30px);
+      font-size: 13px;
+      color: var(--black);
+    }
+
+    /* ── CALENDAR ────────────────────────────────────── */
+    .event-list { list-style: none; }
+
+    .event-item {
+      padding: 5px 0;
+      border-bottom: 1px solid var(--black);
+    }
+
+    .event-item:last-child { border-bottom: none; }
+
+    .event-time {
+      font-size: 13px;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .event-time--current {
+      background: var(--black);
+      color: var(--white);
+      padding: 0 3px;
+    }
+
+    .event-title {
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+
+    /* ── WAKATIME ────────────────────────────────────── */
+    .wakatime-total {
+      text-align: center;
+      margin: 8px 0 4px;
+    }
+
+    .wakatime-total__value {
+      font-size: 34px;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .wakatime-total__label {
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .progress-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 12px;
+      border: 1px solid var(--black);
+      background: var(--white);
+      position: relative;
+    }
+
+    .progress-bar__fill {
+      height: 100%;
+      background: var(--black);
+    }
+
+    .progress-bar__fill--warning {
+      background: repeating-linear-gradient(
+        45deg,
+        var(--black),
+        var(--black) 2px,
+        var(--white) 2px,
+        var(--white) 4px
+      );
+    }
+
+    .progress-label { font-size: 12px; white-space: nowrap; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--black);
+      margin: 8px 0;
+    }
+
+    .lang-list { list-style: none; }
+
+    .lang-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+
+    .lang-name {
+      width: 54px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .lang-bar-wrap {
+      flex: 1;
+      height: 8px;
+      border: 1px solid var(--black);
+      background: var(--white);
+    }
+
+    .lang-bar__fill {
+      height: 100%;
+      background: var(--black);
+    }
+
+    .lang-duration { width: 44px; text-align: right; flex-shrink: 0; }
+
+    /* ── TOKENS ──────────────────────────────────────── */
+    .token-service { margin-bottom: 10px; }
+    .token-service__name { font-size: 13px; font-weight: bold; margin-bottom: 3px; }
+
+    .token-service__counts {
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
+
+    .token-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .token-bar {
+      flex: 1;
+      height: 10px;
+      border: 1px solid var(--black);
+      background: var(--white);
+    }
+
+    .token-bar__fill {
+      height: 100%;
+      background: var(--black);
+    }
+
+    .token-bar__fill--warning {
+      background: repeating-linear-gradient(
+        45deg,
+        var(--black),
+        var(--black) 2px,
+        var(--white) 2px,
+        var(--white) 4px
+      );
+    }
+
+    .token-pct { font-size: 11px; white-space: nowrap; }
+    .token-reset { font-size: 11px; margin-top: 6px; }
+
+    /* ── FOOTER ──────────────────────────────────────── */
+    .footer {
+      display: flex;
+      align-items: center;
+      width: 800px;
+      height: var(--height-footer);
+      border-top: 2px solid var(--black);
+      padding: 0 16px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <span class="header__date"><%= date_str %></span>
+  <span class="header__time"><%= time_str %></span>
+</header>
+
+<!-- COLUMNS -->
+<div class="columns">
+
+  <!-- CALENDAR -->
+  <div class="col col--calendar">
+    <div class="widget-title">Сегодня</div>
+    <% if calendar.nil? || calendar['events'].empty? %>
+      <div class="no-data">нет событий</div>
+    <% else %>
+      <ul class="event-list">
+        <% calendar['events'].each do |event| %>
+          <li class="event-item">
+            <span class="event-time <%= event['current'] ? 'event-time--current' : '' %>"><%= event['time'] %></span>
+            <div class="event-title"><%= event['title'] %></div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+
+  <!-- WAKATIME -->
+  <div class="col col--wakatime">
+    <div class="widget-title">WakaTime</div>
+    <% if wakatime.nil? %>
+      <div class="no-data">нет данных</div>
+    <% else %>
+      <div class="wakatime-total">
+        <div class="wakatime-total__value"><%= wakatime['total_hours'] %></div>
+        <div class="wakatime-total__label">за сегодня</div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar">
+          <div class="progress-bar__fill" style="width: <%= wakatime['bar_percentage'] %>%"></div>
+        </div>
+        <span class="progress-label"><%= wakatime['bar_percentage'] %>%</span>
+      </div>
+      <% unless wakatime['languages'].empty? %>
+        <hr class="divider">
+        <ul class="lang-list">
+          <% wakatime['languages'].each do |lang| %>
+            <li class="lang-item">
+              <span class="lang-name"><%= lang['name'] %></span>
+              <div class="lang-bar-wrap">
+                <div class="lang-bar__fill" style="width: <%= lang['bar_percentage'] %>%"></div>
+              </div>
+              <span class="lang-duration"><%= lang['duration'] %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- TOKENS -->
+  <div class="col col--tokens">
+    <div class="widget-title">Токены</div>
+    <% if tokens.nil? %>
+      <div class="no-data">нет данных</div>
+    <% else %>
+      <div class="token-service">
+        <div class="token-service__name">Claude Code</div>
+        <div class="token-service__counts"><%= tokens['used'] %> / <%= tokens['limit'] %></div>
+        <div class="token-bar-wrap">
+          <div class="token-bar">
+            <div class="token-bar__fill <%= tokens['warning'] ? 'token-bar__fill--warning' : '' %>"
+                 style="width: <%= tokens['percentage'] %>%"></div>
+          </div>
+          <span class="token-pct"><%= tokens['percentage'] %>%</span>
+        </div>
+      </div>
+      <% if tokens['reset_at'] %>
+        <div class="token-reset">Сброс <%= tokens['reset_at'] %></div>
+      <% end %>
+    <% end %>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  Обновлено: <%= updated_at %>
+</footer>
+
+</body>
+</html>

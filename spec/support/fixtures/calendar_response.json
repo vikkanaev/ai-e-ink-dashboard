@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "summary": "Standup",
+      "start": { "dateTime": "2026-04-01T10:00:00+03:00" },
+      "end":   { "dateTime": "2026-04-01T10:15:00+03:00" },
+      "location": "Google Meet"
+    },
+    {
+      "summary": "1:1 с Артёмом",
+      "start": { "dateTime": "2026-04-01T14:00:00+03:00" },
+      "end":   { "dateTime": "2026-04-01T15:00:00+03:00" },
+      "location": null
+    },
+    {
+      "summary": "Deploy prod",
+      "start": { "dateTime": "2026-04-01T17:00:00+03:00" },
+      "end":   { "dateTime": "2026-04-01T17:30:00+03:00" },
+      "location": null
+    }
+  ]
+}
